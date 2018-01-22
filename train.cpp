@@ -1,6 +1,7 @@
 #include "util.h"
 #include "multi.h"
 #include "skipgram_loss.h"
+#include "mips_skipgram_loss.h"
 #include "gd_solve.h"
 #include "lbfgs_solve.h"
 
@@ -8,15 +9,16 @@ void exit_with_help(){
 	cerr << "Usage: train (options) [train_data] (model_fname)" << endl;	
 	cerr << "-l loss: (default 0)" << endl;
 	cerr << "		0 --- skip-gram (exact)" << endl;
-	cerr << "		1 --- skip-gram (mips-approx)" << endl;
-	cerr << "		2 --- skip-gram (decomp-mips)" << endl;
+	cerr << "		1 --- skip-gram (mips-exact)" << endl;
+	cerr << "		2 --- skip-gram (mips-approx)" << endl;
+	cerr << "		3 --- skip-gram (decomp-mips)" << endl;
 	cerr << "-s algorithm: (default 0)" << endl;
 	cerr << "		0 --- gradient descent" << endl;
 	cerr << "		1 --- LBFGS" << endl;
 	cerr << "-v vec_dim: size of the embedding vector (default 100)" << endl;
 	cerr << "-t step_size: GD initial step size (default 0.1)" << endl;
 	cerr << "-f factor_dim: dimension per factor for dual-decomposed loss (default 10)" << endl;
-	cerr << "-q query_size: #label retrieved from MIPS per query for dual-decomposed loss (default 500)" << endl;
+	cerr << "-q query_size: #label retrieved from MIPS per query for dual-decomposed loss (default 1000)" << endl;
 	cerr << "-c num_cluster: #cluster in MIPS for dual-decomposed loss (default 400)" << endl;
 	cerr << "-r num_root_cluster: #root_cluster in hierarchical MIPS (default -1)" << endl;
 	cerr << "-n num_thread: #threads for parallelization (default 10)" << endl;
@@ -97,18 +99,36 @@ int main(int argc, char** argv){
 		Model* model = new Model(prob->K, param->vec_dim);
 		
 		//training objective
-		Function* func = new SkipgramLoss(prob, model);
-		//solve
-		Solver* solver;
-	 	if( param->solver==0 ){
-				solver = new GDSolve(param->init_step_size, param->num_epoch);
+		Function* func = NULL;
+		if( param->loss==0 ){
+				cerr << "Skipgram" << endl;
+				func = new SkipgramLoss(prob, model);
+		}else if( param->loss==1 ){
+				cerr << "Skipgram + MIPS (exact)" << endl;
+				func = new MIPSSkipgramLoss(prob, model, param->query_size);
 		}else{
+				cerr << "unknown loss: " << param->loss << endl;
+				exit(0);
+		}
+
+		//solve
+		Solver* solver = NULL;
+	 	if( param->solver==0 ){
+				cerr << "GD solve..." << endl;
+				solver = new GDSolve(param->init_step_size, param->num_epoch);
+		}else if( param->solver==1 ){
+				cerr << "LBFGS solve..." << endl;
 				int m=10;
 				double tol = 1e-6;
-				Solver* solver = new LBFGSSolve( tol, param->num_epoch, m );
+				solver = new LBFGSSolve( tol, param->num_epoch, m );
+		}else{
+				cerr << "unknown solver: " << param->solver << endl;
+				exit(0);
 		}
 		
 		solver->minimize(func, model->U, model->V);
 		
+		writeModel( param->modelFname, model );
+
 		return 0;
 }

@@ -51,7 +51,7 @@ class Param{
 		num_epoch = 1000;
 		//for dual-decomposed loss
 		factor_dim = 10;
-		query_size = 500;
+		query_size = 1000;
 		num_cluster = 400;
 		num_root_cluster = -1;
 		//for sampled softmax
@@ -67,37 +67,6 @@ class Param{
 		delete[] modelFname;
 	}
 };
-
-
-//only used for prediction
-	
-void writeModel( const char* fname, Problem* prob, double* w ){
-		
-		ofstream fout(fname);
-		fout << "vocabulary size " << prob->K << endl;
-		/*
-		int K = prob->K;
-		//weights
-		for(int j=0;j<D;j++){
-				
-				int nnz = 0;
-				for(int k=0;k<prob->K;k++){
-						if( fabs(w[j*K+k]) > 1e-4 )
-							nnz++;
-				}
-				
-				fout << nnz << " ";
-				for(int k=0;k<prob->K;k++){
-							if( fabs(w[j*K+k]) > 1e-4 )
-									fout << k << ":" << w[j*K+k] << " ";
-				}
-				fout << endl;
-		}
-		cerr << endl;
-		*/
-		fout.close();
-}
-
 
 
 void readData(char* fname, Problem* prob )
@@ -180,8 +149,8 @@ class Model{
 				V = new double[K*R];
 				
 				for(int i=0;i<K*R;i++){
-						U[i] = randn();
-						V[i] = randn();
+						U[i] = randn()*1e-1;
+						V[i] = randn()*1e-1;
 				}
 		}
 		
@@ -191,30 +160,53 @@ class Model{
 		int R;
 };
 
-void readModel(char* file,  Model* model){
-		/*
+Model* readModel(char* file){
+		
 		char* tmp = new char[LINE_LEN];
 		
 		ifstream fin(file);
-		fin >> tmp >> (model->K);
-		fin >> tmp >> (model->D);
-		model->w.resize(model->K);
+		int K, R;
+		fin >> K >> R;
+		K -= 1;
+		Model* model = new Model(K,R);
 		
-		vector<string> ind_val;
-		int nnz_j;
-		for(int j=0;j<model->D;j++){
-				fin >> nnz_j;
-				for(int r=0;r<nnz_j;r++){
-						fin >> tmp;
-						ind_val = split(tmp,":");
-						int k = atoi(ind_val[0].c_str());
-						Float val = atof(ind_val[1].c_str());
-						model->w[k].push_back( make_pair(j,val) );
-				}
+		fin.getline(tmp,LINE_LEN);//filter <s>
+		fin.getline(tmp,LINE_LEN);//filter <s>
+		for(int i=0;i<K;i++){
+				
+				fin >> tmp;
+				
+				for(int j=0;j<R;j++)
+						fin >> (model->U[i*R+j]);
+				for(int j=0;j<R;j++)
+						fin >> (model->V[i*R+j]);
 		}
 		fin.close();
+		delete[] tmp;
 
-		delete[] tmp;*/
+		return model;
+}
+
+void writeModel( const char* fname, Model* model ){
+		
+		int K = model->K;
+		int R = model->R;
+
+		ofstream fout(fname);
+		fout << K << " " << R << endl;
+		fout << "<s>" << endl;
+		
+		double* U = model->U;
+		double* V = model->V;
+		for(int i=0;i<K;i++){
+				fout << i << " ";
+				for(int j=0;j<R;j++)
+						fout << U[i*R+j] << " ";
+				for(int j=0;j<R;j++)
+						fout << V[i*R+j] << " ";
+				fout << endl;
+		}
+		fout.close();
 }
 
 #endif
