@@ -12,6 +12,7 @@ void exit_with_help(){
 	cerr << "		2 --- skip-gram (decomp-mips)" << endl;
 	cerr << "-s algorithm: (default 0)" << endl;
 	cerr << "		0 --- gradient descent" << endl;
+	cerr << "		1 --- LBFGS" << endl;
 	cerr << "-v vec_dim: size of the embedding vector (default 100)" << endl;
 	cerr << "-t step_size: GD initial step size (default 0.1)" << endl;
 	cerr << "-f factor_dim: dimension per factor for dual-decomposed loss (default 10)" << endl;
@@ -40,7 +41,7 @@ void parse_cmd_line(int argc, char** argv, Param* param){
 			
 			case 'l': param->loss = atoi(argv[i]);
 					break;
-			case 's': param->method = atoi(argv[i]);
+			case 's': param->solver = atoi(argv[i]);
 					break;
 			case 'v': param->vec_dim = atoi(argv[i]);
 					break;
@@ -98,10 +99,14 @@ int main(int argc, char** argv){
 		//training objective
 		Function* func = new SkipgramLoss(prob, model);
 		//solve
-		//Solver* solver = new GDSolve(param->init_step_size, param->num_epoch);
-		int m=10;
-		double tol = 1e-6;
-		Solver* solver = new LBFGSSolve( tol, param->num_epoch, m );
+		Solver* solver;
+	 	if( param->solver==0 ){
+				solver = new GDSolve(param->init_step_size, param->num_epoch);
+		}else{
+				int m=10;
+				double tol = 1e-6;
+				Solver* solver = new LBFGSSolve( tol, param->num_epoch, m );
+		}
 		
 		solver->minimize(func, model->U, model->V);
 		

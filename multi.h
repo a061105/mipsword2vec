@@ -22,7 +22,7 @@ class Param{
 	int vec_dim;
 	
 	int loss;
-	int method;
+	int solver;
 
 	//solver-specific param
 	double init_step_size;
@@ -40,6 +40,9 @@ class Param{
 
 	Param(){
 		
+		loss = 0;
+		solver = 0;
+
 		train = NULL;
 		vec_dim = 100;
 		//solver
@@ -177,8 +180,8 @@ class Model{
 				V = new double[K*R];
 				
 				for(int i=0;i<K*R;i++){
-						U[i] = randn()*1e-1;
-						V[i] = randn()*1e-1;
+						U[i] = randn();
+						V[i] = randn();
 				}
 		}
 		
