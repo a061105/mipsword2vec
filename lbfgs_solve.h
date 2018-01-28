@@ -43,11 +43,11 @@ class LBFGSSolve: public Solver{
 						double fval = func->fun();
 						
 						if( fval < prev_fval ){
-								cerr << "iter=" << iter << ", fun_val=" << fval << ", train_time=" << omp_get_wtime()-train_start_time << endl;
+								cerr << "iter=" << iter << ", fun_val=" << fval << ", train_time=" << omp_get_wtime()-train_start_time << ", prob_size=" << avg_prob_size << endl;
 								iter++;
 								prev_fval = fval;
 						}else{
-								cerr << "line search: fun_val=" << fval << ", train_time=" << omp_get_wtime()-train_start_time  << endl;
+								cerr << "line search: fun_val=" << fval << ", train_time=" << omp_get_wtime()-train_start_time  << ", prob_size=" << avg_prob_size << endl;
 						}
 						
 						//gradient
@@ -58,7 +58,6 @@ class LBFGSSolve: public Solver{
 								g[i] = gt[i];
 						delete[] gt;
 						
-						CC++;
 						return fval;
 				}
 

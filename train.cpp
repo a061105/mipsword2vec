@@ -112,7 +112,7 @@ int main(int argc, char** argv){
 		}else if( param->loss==2 ){
 
 				cerr << "Skipgram + MIPS (approx)" << endl;
-				double prob_discard = 0.0;
+				double prob_discard = 0.01;
 				func = new DecompMipsSkipgram(prob, model, param->query_size, param->factor_dim, param->num_cluster, prob_discard, param->num_thread );
 
 		}else if( param->loss==3 ){

@@ -73,12 +73,6 @@ class DecompMipsSkipgram: public Function{
 						int num_return = max(query_size, (int)lab_fq->size());
 						mips->query( ui, q_result, num_return );
 						
-						if( CC>=2 ){
-								vector<int> q2 = q_result[0];
-								distinct_vec(q2);
-								cerr << q2.size() << endl;
-								exit(0);
-						}
 						//compute sum_j qij * <ui,vj>
 						double emp_sum = 0.0;
 						for(SparseVec::iterator it=lab_fq->begin(); it!=lab_fq->end(); it++)
@@ -90,7 +84,12 @@ class DecompMipsSkipgram: public Function{
 						#pragma omp atomic update
 						fun_val += neg_loglike;
 				}
-
+				
+				avg_prob_size = 0.0;
+				for(int n=0;n<prob->data.size();n++)
+						avg_prob_size += pred_prob[prob->data[n]->first].size();
+				avg_prob_size /= prob->data.size();
+				
 				return fun_val;
 		}
 		
@@ -217,6 +216,7 @@ class DecompMipsSkipgram: public Function{
 						int j = it->first;
 						it->second = inner_prod( ui, V+j*R, R );
 				}
+
 				double logZ = make_multinomial( prob_i );
 
 				return logZ;
@@ -225,6 +225,11 @@ class DecompMipsSkipgram: public Function{
 		/** (re)build MIPS data structure for V: K*R
 		 */
 		void reconstruct_mips(double* V, int K, int R){
+				
+				/*if( mips != NULL )
+						delete mips;
+				
+				mips = new RandomClusterMIPS( factor_dim, num_factor, num_cluster );*/
 				
 				if( mips == NULL )
 						mips = new RandomClusterMIPS( factor_dim, num_factor, num_cluster );

@@ -743,12 +743,12 @@ double make_multinomial( SparseVec& score ){
 		}
 		for(auto it=score.begin(); it!=score.end(); it++)
 				it->second = it->second / Zf;
-
-		Zf += max_val;
+		
+		Zf = log(Zf) + max_val;
 		
 		return Zf;
 }
 
-int CC =0 ;
+double avg_prob_size;
 
 #endif

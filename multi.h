@@ -46,7 +46,7 @@ class Param{
 		train = NULL;
 		vec_dim = 100;
 		//solver
-		init_step_size = 1.0;
+		init_step_size = 0.1;
 		num_thread = 10;
 		num_epoch = 1000;
 		//for dual-decomposed loss
