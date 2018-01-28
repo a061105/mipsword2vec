@@ -727,4 +727,28 @@ void vadd(double a, double* v1, double b, double* v2, int d, double* v3){
 		}
 }
 
+double make_multinomial( SparseVec& score ){
+		
+		assert( score.size() > 0 );
+
+		double max_val = -1e300;
+		for(auto it=score.begin(); it!=score.end(); it++)
+				if( it->second > max_val )
+						max_val = it->second;
+
+		double Zf = 0.0;
+		for(auto it=score.begin(); it!=score.end(); it++){
+				it->second = exp(it->second-max_val);
+				Zf += it->second;
+		}
+		for(auto it=score.begin(); it!=score.end(); it++)
+				it->second = it->second / Zf;
+
+		Zf += max_val;
+		
+		return Zf;
+}
+
+int CC =0 ;
+
 #endif

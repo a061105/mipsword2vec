@@ -29,6 +29,7 @@ class LBFGSSolve: public Solver{
 						V = _V;
 						iter = 0;
 						prev_fval = 1e300;
+						train_start_time = omp_get_wtime();
 				}
 				double operator()(const VectorXd& x, VectorXd& g){
 						int d1 = func->dim_U();
@@ -42,11 +43,11 @@ class LBFGSSolve: public Solver{
 						double fval = func->fun();
 						
 						if( fval < prev_fval ){
-								cerr << "iter=" << iter << ", fun_val=" << fval << endl;
+								cerr << "iter=" << iter << ", fun_val=" << fval << ", train_time=" << omp_get_wtime()-train_start_time << endl;
 								iter++;
 								prev_fval = fval;
 						}else{
-								cerr << "line search: fun_val=" << fval << endl;
+								cerr << "line search: fun_val=" << fval << ", train_time=" << omp_get_wtime()-train_start_time  << endl;
 						}
 						
 						//gradient
@@ -57,6 +58,7 @@ class LBFGSSolve: public Solver{
 								g[i] = gt[i];
 						delete[] gt;
 						
+						CC++;
 						return fval;
 				}
 
@@ -66,6 +68,7 @@ class LBFGSSolve: public Solver{
 				double* V;
 				int iter;
 				double prev_fval;
+				double train_start_time;
 		};
 
 		private:

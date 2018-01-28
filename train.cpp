@@ -1,7 +1,8 @@
 #include "util.h"
 #include "multi.h"
 #include "skipgram_loss.h"
-#include "mips_skipgram_loss.h"
+#include "exact_mips_skipgram.h"
+#include "decomp_mips_skipgram.h"
 #include "gd_solve.h"
 #include "lbfgs_solve.h"
 
@@ -18,7 +19,7 @@ void exit_with_help(){
 	cerr << "-v vec_dim: size of the embedding vector (default 100)" << endl;
 	cerr << "-t step_size: GD initial step size (default 0.1)" << endl;
 	cerr << "-f factor_dim: dimension per factor for dual-decomposed loss (default 10)" << endl;
-	cerr << "-q query_size: #label retrieved from MIPS per query for dual-decomposed loss (default 1000)" << endl;
+	cerr << "-q query_size: #label retrieved from MIPS per query for dual-decomposed loss (default 10000)" << endl;
 	cerr << "-c num_cluster: #cluster in MIPS for dual-decomposed loss (default 400)" << endl;
 	cerr << "-r num_root_cluster: #root_cluster in hierarchical MIPS (default -1)" << endl;
 	cerr << "-n num_thread: #threads for parallelization (default 10)" << endl;
@@ -103,9 +104,21 @@ int main(int argc, char** argv){
 		if( param->loss==0 ){
 				cerr << "Skipgram" << endl;
 				func = new SkipgramLoss(prob, model);
+
 		}else if( param->loss==1 ){
 				cerr << "Skipgram + MIPS (exact)" << endl;
-				func = new MIPSSkipgramLoss(prob, model, param->query_size);
+				func = new ExactMipsSkipgram(prob, model, param->query_size);
+
+		}else if( param->loss==2 ){
+
+				cerr << "Skipgram + MIPS (approx)" << endl;
+				double prob_discard = 0.0;
+				func = new DecompMipsSkipgram(prob, model, param->query_size, param->factor_dim, param->num_cluster, prob_discard, param->num_thread );
+
+		}else if( param->loss==3 ){
+				
+				cerr << "Skipgram + MIPS (decomposed)" << endl;
+				//func = new MipsSkipgram(prob, model, param->query_size);
 		}else{
 				cerr << "unknown loss: " << param->loss << endl;
 				exit(0);

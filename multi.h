@@ -51,7 +51,7 @@ class Param{
 		num_epoch = 1000;
 		//for dual-decomposed loss
 		factor_dim = 10;
-		query_size = 1000;
+		query_size = 10000;
 		num_cluster = 400;
 		num_root_cluster = -1;
 		//for sampled softmax
@@ -149,8 +149,8 @@ class Model{
 				V = new double[K*R];
 				
 				for(int i=0;i<K*R;i++){
-						U[i] = randn()*1e-1;
-						V[i] = randn()*1e-1;
+						U[i] = randn()*5e-1;
+						V[i] = randn()*5e-1;
 				}
 		}
 		
@@ -193,7 +193,7 @@ void writeModel( const char* fname, Model* model ){
 		int R = model->R;
 
 		ofstream fout(fname);
-		fout << K << " " << R << endl;
+		fout << K+1 << " " << R << endl;
 		fout << "<s>" << endl;
 		
 		double* U = model->U;
