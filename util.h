@@ -749,6 +749,30 @@ double make_multinomial( SparseVec& score ){
 		return Zf;
 }
 
-double avg_prob_size;
+/*
+class FastExp{
+	
+		public:
+		static int EXP_TABLE_SIZE;
+		static FastExp* ins;
+		
+		FastExp(){
+				expTable = (double*)malloc((EXP_TABLE_SIZE + 1) * sizeof(double));
+				for (i = 0; i < EXP_TABLE_SIZE; i++)
+						expTable[i] = exp((i / (double)EXP_TABLE_SIZE * 2 - 1) * MAX_EXP); // Pre
+		}
+
+		double exp(double a){
+				
+		}
+
+		private:
+		double* expTable;
+};
+
+FastExp::EXP_TABLE_SIZE = 1000;
+FastExp::ins = new FastExp();
+*/
+double avg_prob_size=0.0;
 
 #endif
