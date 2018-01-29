@@ -149,8 +149,8 @@ class Model{
 				V = new double[K*R];
 				
 				for(int i=0;i<K*R;i++){
-						U[i] = randn()*5e-1;
-						V[i] = randn()*5e-1;
+						U[i] = randn();
+						V[i] = randn();
 				}
 		}
 		
