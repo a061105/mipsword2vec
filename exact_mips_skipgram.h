@@ -54,7 +54,8 @@ class ExactMipsSkipgram: public Function{
 						double sum = 0.0;
 						double max_val = pred[index[0]];
 						pred_prob[i].clear();
-						for(int r=0;r< max(query_size,(int)lab_fq->size()) ;r++){
+						//for(int r=0;r< max(query_size,(int)lab_fq->size()) ;r++){
+						for(int r=0;r<query_size ;r++){
 								int j = index[r];
 								double v = exp(pred[j]-max_val);
 								pred_prob[i].push_back( make_pair(j,v) );
