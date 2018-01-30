@@ -27,7 +27,7 @@ void exit_with_help(){
 	cerr << "-n num_thread: #threads for parallelization (default 10)" << endl;
 	cerr << "-z sample_size: #classes sampled per update in sampled softmax loss (default 1000)" << endl;
 	cerr << "-e num_epoch: number of epoches for running SGD (default 1000)" << endl;
-	cerr << "-a als_inner_iter: #inner-iter for als subproblem (dafault 10)." << endl;
+	cerr << "-a als_inner_iter: #inner-iter for als subproblem (dafault 5)." << endl;
 	cerr << "-i init_model: model file used as initialization." << endl;
 	exit(0);
 }

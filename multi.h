@@ -52,7 +52,7 @@ class Param{
 		init_step_size = 0.1;
 		num_thread = 10;
 		num_epoch = 1000;
-		als_inner_iter = 10;
+		als_inner_iter = 5;
 		//for dual-decomposed loss
 		factor_dim = 10;
 		query_size = 10000;
