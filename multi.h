@@ -37,7 +37,9 @@ class Param{
 	int sample_size;
 	
 	char* init_model;
-
+	
+	vector<char*> model_list;
+	
 	Param(){
 		
 		loss = 0;
@@ -149,12 +151,17 @@ class Model{
 				V = new double[K*R];
 				
 				for(int i=0;i<K*R;i++){
-						U[i] = randn()*0.1;
-						V[i] = randn()*0.1;
+						U[i] = randn();
+						V[i] = randn();
 						//V[i] = 0.0;
 				}
 		}
 		
+		~Model(){
+				delete[] U;
+				delete[] V;
+		}
+
 		double* U;
 		double* V;
 		int K;

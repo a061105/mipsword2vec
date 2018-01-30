@@ -97,7 +97,17 @@ int main(int argc, char** argv){
 		cerr << "N=" << prob->N << ", |vocab|=" << prob->K << ", vec_size=" << param->vec_dim << endl;
 		
 		//model initialization
-		Model* model = new Model(prob->K, param->vec_dim);
+		Model* model;
+	 	if( param->init_model == NULL ){
+				cerr << "load initial model..." << endl;
+				model = new Model(prob->K, param->vec_dim);
+		}
+		else{
+				cerr << "initialize model" << endl;
+				model = readModel( param->init_model );
+		}
+		
+		cerr << "K=" << model->K << ", R=" << model->R << endl;
 		
 		//training objective
 		Function* func = NULL;

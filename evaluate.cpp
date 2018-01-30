@@ -37,7 +37,9 @@ void parse_cmd_line(int argc, char** argv, Param* param){
 		exit_with_help();
 	
 	param->trainFname = argv[i++];
-	param->modelFname = argv[i];
+	
+	for(;i<argc;i++)
+			param->model_list.push_back( argv[i] );
 }
 
 
@@ -47,26 +49,23 @@ int main(int argc, char** argv){
 		parse_cmd_line(argc, argv, param);
 		
 		omp_set_num_threads( param->num_thread );
-
+		
 		//read data
 		Problem* prob = new Problem();
 		readData( param->trainFname, prob);
 		cerr << "N=" << prob->N << endl;
-		Model* model = readModel( param->modelFname );
-		cerr << "|vocab|=" << model->K << ", vec_size=" << model->R << endl;
+
+		for( int i=0; i<param->model_list.size(); i++){
+				
+				Model* model = readModel( param->model_list[i] );
+				
+				Function* func = new SkipgramLoss(prob, model);
+				cerr << param->model_list[i] << " (K=" << model->K << ", R=" << model->R << "), skip-gram loss=" << func->fun() << endl;
+				
+				delete func;
+				delete model;
+		}
 		
-		//choose measure
-		/*double* U = model->U;
-		double* V = model->V;
-		int w1 = 338;
-		int w2 = 315;
-		cout << "Ans:" << inner_prod(U+w1*model->R, V+w2*model->R, model->R) << endl;
-		for(int k=0;k<100;k++){
-				int w3 = rand() % model->K;
-				cout << inner_prod(U+w1*model->R, V+w3*model->R, model->R) << endl;
-		}*/
-		Function* func = new SkipgramLoss(prob, model);
-		cerr << "skip-gram loss=" << func->fun() << endl;
 		
 		return 0;
 }
