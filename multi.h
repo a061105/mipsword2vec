@@ -27,6 +27,7 @@ class Param{
 	//solver-specific param
 	double init_step_size;
 	int num_epoch;
+	int als_inner_iter;
 		//for dual-decomposed loss
 	int factor_dim;
 	int query_size;
@@ -51,6 +52,7 @@ class Param{
 		init_step_size = 0.1;
 		num_thread = 10;
 		num_epoch = 1000;
+		als_inner_iter = 10;
 		//for dual-decomposed loss
 		factor_dim = 10;
 		query_size = 10000;
@@ -216,5 +218,30 @@ void writeModel( const char* fname, Model* model ){
 		}
 		fout.close();
 }
+
+/*class ModelTimeStamp{
+		
+		public:
+			static ModelTimeStamp* ins;
+			
+			ModelTimeStamp(char* _model_prefix){
+					model_prefix = _model_prefix;
+			}
+			
+			void write(Model* model){
+					
+					char* tmp = new char[FNAME_LEN];
+					sprintf(tmp, "%s.%f", model_prefix, timestamp);
+					
+					writeModel( model, tmp );
+					
+					delete[] tmp;
+			}
+			
+		private:
+			char* model_prefix;
+};
+
+ModelWriter::ins = NULL;*/
 
 #endif

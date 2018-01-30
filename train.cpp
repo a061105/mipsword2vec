@@ -5,6 +5,7 @@
 #include "decomp_mips_skipgram.h"
 #include "gd_solve.h"
 #include "lbfgs_solve.h"
+#include "als_solve.h"
 
 void exit_with_help(){
 	cerr << "Usage: train (options) [train_data] (model_fname)" << endl;	
@@ -16,6 +17,7 @@ void exit_with_help(){
 	cerr << "-s algorithm: (default 0)" << endl;
 	cerr << "		0 --- gradient descent" << endl;
 	cerr << "		1 --- LBFGS" << endl;
+	cerr << "		2 --- ALS (w/ LBFGS)" << endl;
 	cerr << "-v vec_dim: size of the embedding vector (default 100)" << endl;
 	cerr << "-t step_size: GD initial step size (default 0.1)" << endl;
 	cerr << "-f factor_dim: dimension per factor for dual-decomposed loss (default 10)" << endl;
@@ -25,6 +27,7 @@ void exit_with_help(){
 	cerr << "-n num_thread: #threads for parallelization (default 10)" << endl;
 	cerr << "-z sample_size: #classes sampled per update in sampled softmax loss (default 1000)" << endl;
 	cerr << "-e num_epoch: number of epoches for running SGD (default 1000)" << endl;
+	cerr << "-a als_inner_iter: #inner-iter for als subproblem (dafault 10)." << endl;
 	cerr << "-i init_model: model file used as initialization." << endl;
 	exit(0);
 }
@@ -63,6 +66,8 @@ void parse_cmd_line(int argc, char** argv, Param* param){
 			case 'z': param->sample_size = atoi(argv[i]);
 					break;
 			case 'e': param->num_epoch = atoi(argv[i]);
+					break;
+			case 'a': param->als_inner_iter = atoi(argv[i]);
 					break;
 			case 'i': param->init_model = argv[i];
 					break;
@@ -144,6 +149,11 @@ int main(int argc, char** argv){
 				int m=10;
 				double tol = 1e-6;
 				solver = new LBFGSSolve( tol, param->num_epoch, m );
+		}else if( param->solver==2 ){
+				cerr << "ALS solve..." << endl;
+				int m=10;
+				double tol = 1e-3;
+				solver = new AlsSolve( tol, param->num_epoch, param->als_inner_iter, m );
 		}else{
 				cerr << "unknown solver: " << param->solver << endl;
 				exit(0);

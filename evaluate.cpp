@@ -3,7 +3,7 @@
 #include "skipgram_loss.h"
 
 void exit_with_help(){
-	cerr << "Usage: evaluate (options) [data] [model]" << endl;	
+	cerr << "Usage: evaluate (options) [data] $(ls -v [model_dir]/*)" << endl;	
 	cerr << "-s measure: (default 0)" << endl;
 	cerr << "		0 --- skipgram (cross entropy)" << endl;
 	cerr << "-n #thread: (default 10)" << endl;
