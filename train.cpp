@@ -104,11 +104,11 @@ int main(int argc, char** argv){
 		//model initialization
 		Model* model;
 	 	if( param->init_model == NULL ){
-				cerr << "load initial model..." << endl;
+				cerr << "initialize model" << endl;
 				model = new Model(prob->K, param->vec_dim);
 		}
 		else{
-				cerr << "initialize model" << endl;
+				cerr << "load initial model..." << endl;
 				model = readModel( param->init_model );
 		}
 		
@@ -152,7 +152,7 @@ int main(int argc, char** argv){
 		}else if( param->solver==2 ){
 				cerr << "ALS solve..." << endl;
 				int m=10;
-				double tol = 1e-3;
+				double tol = 1e-1;
 				solver = new AlsSolve( tol, param->num_epoch, param->als_inner_iter, m );
 		}else{
 				cerr << "unknown solver: " << param->solver << endl;

@@ -1,5 +1,5 @@
 CXX = g++
-CFLAGS = -O3 -std=c++11 -fopenmp
+CFLAGS = -O3 -std=c++11 -fopenmp -w
 LIB = include/
 
 all: clean train evaluate

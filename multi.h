@@ -153,8 +153,8 @@ class Model{
 				V = new double[K*R];
 				
 				for(int i=0;i<K*R;i++){
-						U[i] = randn();
-						V[i] = randn();
+						U[i] = randn()*0.1;
+						V[i] = randn()*0.1;
 						//V[i] = 0.0;
 				}
 		}
